@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Vaccine Inventory Management Page">
+
+    <!-- title -->
+    <title>Vaccine Inventory Management</title>
+
+    <!-- google font -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
+    <!-- fontawesome -->
+    <link rel="stylesheet" href="assets/css/all.min.css">
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <!-- main style -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <!-- responsive -->
+    <link rel="stylesheet" href="assets/css/responsive.css">
+
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            margin: 50px auto;
+            max-width: 1200px;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #0044cc;
+        }
+        .notification-header {
+            text-align: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .table thead {
+            background-color: #0044cc;
+            color: white;
+        }
+        .table th, .table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+        .form-inline {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .form-inline input, .form-inline select, .form-inline button {
+            margin: 0 10px;
+        }
+        .form-inline input, .form-inline select {
+            width: 200px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .form-inline button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #0044cc;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .form-inline button:hover {
+            background-color: #003399;
+        }
+        .notification-message {
+            display: none;
+            text-align: center;
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+        <h2>Vaccine Inventory Management</h2>
+        <div class="notification-header" onclick="showNotification()">New Vaccine Added! Click to see details.</div>
+        <div class="notification-message" id="notification-message"></div>
+        <div class="form-inline">
+            <input type="text" id="vaccine-name" placeholder="Vaccine Name">
+            <input type="number" id="quantity" placeholder="Quantity">
+            <input type="date" id="expiry-date" placeholder="Expiry Date">
+            <select id="status">
+                <option value="Available">Available</option>
+                <option value="Out of Stock">Out of Stock</option>
+            </select>
+            <button onclick="addVaccine()">Add Vaccine</button>
+        </div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Vaccine Name</th>
+                    <th>Quantity</th>
+                    <th>Expiry Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="inventory-table-body">
+                <!-- Inventory rows will be added here dynamically -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        let inventory = [];
+        let idCounter = 1;
+
+        function addVaccine() {
+            const name = document.getElementById('vaccine-name').value;
+            const quantity = document.getElementById('quantity').value;
+            const expiryDate = document.getElementById('expiry-date').value;
+            const status = document.getElementById('status').value;
+
+            if (name && quantity && expiryDate) {
+                inventory.push({ id: idCounter++, name, quantity, expiryDate, status });
+                updateInventoryTable();
+                clearForm();
+                showNotification(name, quantity);
+            } else {
+                alert('Please fill all fields');
+            }
+        }
+
+        function updateInventoryTable() {
+            const tableBody = document.getElementById('inventory-table-body');
+            tableBody.innerHTML = '';
+
+            inventory.forEach(vaccine => {
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                    <td>${vaccine.id}</td>
+                    <td>${vaccine.name}</td>
+                    <td>${vaccine.quantity}</td>
+                    <td>${vaccine.expiryDate}</td>
+                    <td>${vaccine.status}</td>
+                    <td>
+                        <button onclick="editVaccine(${vaccine.id})">Edit</button>
+                        <button onclick="deleteVaccine(${vaccine.id})">Delete</button>
+                    </td>
+                `;
+
+                tableBody.appendChild(row);
+            });
+        }
+
+        function clearForm() {
+            document.getElementById('vaccine-name').value = '';
+            document.getElementById('quantity').value = '';
+            document.getElementById('expiry-date').value = '';
+            document.getElementById('status').value = 'Available';
+        }
+
+        function editVaccine(id) {
+            const vaccine = inventory.find(v => v.id === id);
+            document.getElementById('vaccine-name').value = vaccine.name;
+            document.getElementById('quantity').value = vaccine.quantity;
+            document.getElementById('expiry-date').value = vaccine.expiryDate;
+            document.getElementById('status').value = vaccine.status;
+
+            deleteVaccine(id);
+        }
+
+        function deleteVaccine(id) {
+            inventory = inventory.filter(v => v.id !== id);
+            updateInventoryTable();
+        }
+
+        function showNotification(name, quantity) {
+            const notificationMessage = document.getElementById('notification-message');
+            notificationMessage.innerText = `New Vaccine Added: ${name} with quantity ${quantity}`;
+            notificationMessage.style.display = 'block';
+            setTimeout(() => {
+                notificationMessage.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Add 50 dummy data entries
+        for (let i = 1; i <= 50; i++) {
+            inventory.push({
+                id: idCounter++,
+                name: `Vaccine ${i}`,
+                quantity: Math.floor(Math.random() * 100) + 1,
+                expiryDate: `2024-${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}`,
+                status: Math.random() > 0.5 ? 'Available' : 'Out of Stock'
+            });
+        }
+
+        // Update table with dummy data
+        updateInventoryTable();
+    </script>
+</body>
+</html>
+

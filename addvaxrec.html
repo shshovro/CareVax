@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Vaccination Record</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 style="color: rgb(7, 119, 224);" class="text-center">Add New Vaccination Record</h2>
+    
+        <div class="card mt-4">
+            <div class="card-body">
+                <form id="addRecordForm" class="form-inline mb-4">
+                    <div class="form-group mx-sm-3 mb-2">
+                        <label for="newPatientId" class="sr-only">Patient ID</label>
+                        <input type="text" class="form-control" id="newPatientId" placeholder="Patient ID">
+                    </div>
+                    <div class="form-group mx-sm-3 mb-2">
+                        <label for="newVaccine" class="sr-only">Vaccine</label>
+                        <input type="text" class="form-control" id="newVaccine" placeholder="Vaccine">
+                    </div>
+                    <div class="form-group mx-sm-3 mb-2">
+                        <label for="newDate" class="sr-only">Date</label>
+                        <input type="date" class="form-control" id="newDate">
+                    </div>
+                    <div class="form-group mx-sm-3 mb-2">
+                        <label for="newDose" class="sr-only">Dose</label>
+                        <input type="text" class="form-control" id="newDose" placeholder="Dose">
+                    </div>
+                    <div class="form-group mx-sm-3 mb-2">
+                        <label for="newAdministeredBy" class="sr-only">Administered By</label>
+                        <input type="text" class="form-control" id="newAdministeredBy" placeholder="Administered By">
+                    </div>
+                    <button type="button" class="btn btn-primary mb-2" onclick="addRecord()">Add Record</button>
+                </form>
+
+                <table class="table table-bordered">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Patient ID</th>
+                            <th scope="col">Vaccine</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Dose</th>
+                            <th scope="col">Administered By</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recordTableBody">
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>P123456</td>
+                            <td>COVID-19</td>
+                            <td>2021-01-15</td>
+                            <td>1st Dose</td>
+                            <td>Dr. Smith</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>P123456</td>
+                            <td>COVID-19</td>
+                            <td>2021-02-15</td>
+                            <td>2nd Dose</td>
+                            <td>Dr. Smith</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">3</th>
+                            <td>P123456</td>
+                            <td>Influenza</td>
+                            <td>2020-10-01</td>
+                            <td>Annual</td>
+                            <td>Nurse Jane</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">4</th>
+                            <td>P123456</td>
+                            <td>MMR</td>
+                            <td>2019-03-15</td>
+                            <td>1st Dose</td>
+                            <td>Dr. Doe</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">5</th>
+                            <td>P123456</td>
+                            <td>MMR</td>
+                            <td>2019-08-19</td>
+                            <td>2nd Dose</td>
+                            <td>Dr. Doe</td>
+                        </tr>
+                        <!-- Add more rows as needed -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        function addRecord() {
+            const patientId = document.getElementById("newPatientId").value;
+            const vaccine = document.getElementById("newVaccine").value;
+            const date = document.getElementById("newDate").value;
+            const dose = document.getElementById("newDose").value;
+            const administeredBy = document.getElementById("newAdministeredBy").value;
+
+            if (patientId && vaccine && date && dose && administeredBy) {
+                const tableBody = document.getElementById("recordTableBody");
+                const rowCount = tableBody.rows.length;
+                const newRow = tableBody.insertRow(rowCount);
+
+                const cell1 = newRow.insertCell(0);
+                const cell2 = newRow.insertCell(1);
+                const cell3 = newRow.insertCell(2);
+                const cell4 = newRow.insertCell(3);
+                const cell5 = newRow.insertCell(4);
+                const cell6 = newRow.insertCell(5);
+
+                cell1.innerHTML = rowCount + 1;
+                cell2.innerHTML = patientId;
+                cell3.innerHTML = vaccine;
+                cell4.innerHTML = date;
+                cell5.innerHTML = dose;
+                cell6.innerHTML = administeredBy;
+
+                document.getElementById("addRecordForm").reset();
+            } else {
+                alert("Please fill out all fields.");
+            }
+        }
+    </script>
+</body>
+</html>

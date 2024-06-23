@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Query Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .admin-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            display: flex;
+            flex-direction: column;
+        }
+        h2 {
+            text-align: center;
+            color: #003366;
+            margin-bottom: 20px;
+        }
+        .content {
+            display: flex;
+            justify-content: space-between;
+        }
+        .queries, .replies {
+            width: 48%;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        .queries {
+            border-right: 2px solid #076cd1;
+        }
+        .query, .reply-history {
+            border: 1px solid #076cd1;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background-color: #fff;
+        }
+        .query h3, .reply-history h4 {
+            margin-top: 0;
+            color: #076cd1;
+        }
+        .query p, .reply-history p {
+            margin: 5px 0;
+        }
+        .reply-container {
+            display: flex;
+            flex-direction: column;
+            margin-top: 10px;
+        }
+        .reply-container textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #076cd1;
+            border-radius: 4px;
+            resize: vertical;
+        }
+        .reply-container button {
+            background-color: #076cd1;
+            color: #ffffff;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .reply-container button:hover {
+            background-color: #076cd1;
+        }
+        .reply {
+            margin-top: 5px;
+            padding: 5px;
+            border: 1px solid #076cd1;
+            border-radius: 4px;
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <h2>Admin Query Management</h2>
+        <div class="content">
+            <div class="queries">
+                <h3>New Queries</h3>
+                <div class="query">
+                    <h3>Query ID: 1</h3>
+                    <p><strong>Question:</strong> How can I reset my password?</p>
+                    <div class="reply-container">
+                        <textarea rows="3" placeholder="Enter your reply here..."></textarea>
+                        <button>Submit Reply</button>
+                    </div>
+                </div>
+
+                <div class="query">
+                    <h3>Query ID: 2</h3>
+                    <p><strong>Question:</strong> Where can I find the user manual?</p>
+                    <div class="reply-container">
+                        <textarea rows="3" placeholder="Enter your reply here..."></textarea>
+                        <button>Submit Reply</button>
+                    </div>
+                </div>
+
+                <div class="query">
+                    <h3>Query ID: 3</h3>
+                    <p><strong>Question:</strong> What are the system requirements for the software?</p>
+                    <div class="reply-container">
+                        <textarea rows="3" placeholder="Enter your reply here..."></textarea>
+                        <button>Submit Reply</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="replies">
+                <h3>Previous Replies</h3>
+                <div class="reply-history">
+                    <h4>Reply History for Query ID: 1</h4>
+                    <div class="reply">
+                        <p><strong>Admin:</strong> You can reset your password by going to the account settings.</p>
+                        <p><em>Date:</em> 2024-06-01</p>
+                    </div>
+                </div>
+
+                <div class="reply-history">
+                    <h4>Reply History for Query ID: 2</h4>
+                    <div class="reply">
+                        <p><strong>Admin:</strong> The user manual is available in the Help section of our website.</p>
+                        <p><em>Date:</em> 2024-06-02</p>
+                    </div>
+                </div>
+
+                <div class="reply-history">
+                    <h4>Reply History for Query ID: 3</h4>
+                    <div class="reply">
+                        <p><strong>Admin:</strong> The system requirements are listed on the product page.</p>
+                        <p><em>Date:</em> 2024-06-03</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.querySelectorAll('.reply-container button').forEach(button => {
+            button.addEventListener('click', function() {
+                const textarea = this.previousElementSibling;
+                const reply = textarea.value.trim();
+                if (reply) {
+                    const queryDiv = this.closest('.query');
+                    const queryId = queryDiv.querySelector('h3').innerText.split(': ')[1];
+                    
+                    let replyHistoryDiv = document.querySelector(`.reply-history h4:contains('Query ID: ${queryId}')`);
+                    
+                    if (!replyHistoryDiv) {
+                        replyHistoryDiv = document.createElement('div');
+                        replyHistoryDiv.classList.add('reply-history');
+                        replyHistoryDiv.innerHTML = `
+                            <h4>Reply History for Query ID: ${queryId}</h4>
+                        `;
+                        document.querySelector('.replies').appendChild(replyHistoryDiv);
+                    }
+                    
+                    const newReply = document.createElement('div');
+                    newReply.classList.add('reply');
+                    const currentDate = new Date().toISOString().split('T')[0];
+                    newReply.innerHTML = `
+                        <p><strong>Admin:</strong> ${reply}</p>
+                        <p><em>Date:</em> ${currentDate}</p>
+                    `;
+                    replyHistoryDiv.appendChild(newReply);
+                    
+                    alert('Reply submitted: ' + reply);
+                    textarea.value = ''; // Clear the textarea
+                } else {
+                    alert('Please enter a reply.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

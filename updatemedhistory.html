@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Medical History Table">
+
+    <!-- title -->
+    <title>Manage Patients' Medical History</title>
+
+    <!-- favicon -->
+    <link rel="shortcut icon" type="image/png" href="assets/img/favicon.png">
+    <!-- google font -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
+    <!-- fontawesome -->
+    <link rel="stylesheet" href="assets/css/all.min.css">
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <!-- main style -->
+    <link rel="stylesheet" href="assets/css/main.css">
+
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+
+        .table-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th, table td {
+            border: 1px solid #dee2e6;
+            padding: 12px;
+            text-align: center;
+            color: #000000; /* Black color for table data */
+        }
+
+        table th {
+            background-color: #007bff;
+            color: #ffffff;
+        }
+
+        table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .download-link {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #28a745;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .download-link:hover {
+            background-color: #218838;
+        }
+
+        .search-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .search-container input[type=text] {
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .search-container button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .search-container button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Enter Medical History ID">
+        <button onclick="searchMedicalHistory()">Search</button>
+    </div>
+
+    <div class="table-container">
+        <h3 style="text-align: center; margin-bottom: 20px;">Patients' Medical History</h3>
+        <table id="medicalHistoryTable">
+            <thead>
+                <tr>
+                    <th>Medical History ID</th>
+                    <th>Sugar Level</th>
+                    <th>Blood Pressure</th>
+                    <th>Vaccination Taken Date</th>
+                    <th>Diseases</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>001</td>
+                    <td>120 mg/dL</td>
+                    <td>120/80 mmHg</td>
+                    <td>2024-06-01</td>
+                    <td>Hypertension, Diabetes</td>
+                    <td><a href="#" class="download-link" onclick="downloadPDF('001')">Download PDF</a></td>
+                </tr>
+                <tr>
+                    <td>002</td>
+                    <td>110 mg/dL</td>
+                    <td>130/85 mmHg</td>
+                    <td>2024-06-10</td>
+                    <td>Heart Disease</td>
+                    <td><a href="#" class="download-link" onclick="downloadPDF('002')">Download PDF</a></td>
+                </tr>
+                <tr>
+                    <td>003</td>
+                    <td>130 mg/dL</td>
+                    <td>140/90 mmHg</td>
+                    <td>2024-06-15</td>
+                    <td>None</td>
+                    <td><a href="#" class="download-link" onclick="downloadPDF('003')">Download PDF</a></td>
+                </tr>
+                <tr>
+                    <td>004</td>
+                    <td>115 mg/dL</td>
+                    <td>125/82 mmHg</td>
+                    <td>2024-06-20</td>
+                    <td>Obesity</td>
+                    <td><a href="#" class="download-link" onclick="downloadPDF('004')">Download PDF</a></td>
+                </tr>
+                <tr>
+                    <td>005</td>
+                    <td>125 mg/dL</td>
+                    <td>130/78 mmHg</td>
+                    <td>2024-06-25</td>
+                    <td>High Cholesterol</td>
+                    <td><a href="#" class="download-link" onclick="downloadPDF('005')">Download PDF</a></td>
+                </tr>
+                
+                <!-- Add more rows as needed -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <script>
+        function searchMedicalHistory() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("medicalHistoryTable");
+            tr = table.getElementsByTagName("tr");
+
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[0]; // Assuming Medical History ID is in the first column
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
+        function downloadPDF(historyId) {
+            alert('Downloading PDF for Medical History ID: ' + historyId);
+            // Replace with actual download functionality using PDF generation library or server endpoint
+            // Example: window.open('download_pdf.php?history_id=' + historyId, '_blank');
+        }
+    </script>
+
+</body>
+</html>

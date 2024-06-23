@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Vaccine Inventory Management Page">
+
+    <!-- title -->
+    <title>Vaccine Inventory Management</title>
+
+    <!-- google font -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+    <!-- fontawesome -->
+    <link rel="stylesheet" href="assets/css/all.min.css">
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <!-- main style -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <!-- responsive -->
+    <link rel="stylesheet" href="assets/css/responsive.css">
+
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            margin: 50px auto;
+            max-width: 1200px;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #0044cc;
+        }
+        .table thead {
+            background-color: #0044cc;
+            color: white;
+        }
+        .table th, .table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+        <h2>Vaccine Inventory Management</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Vaccine Name</th>
+                    <th>Quantity</th>
+                    <th>Expiry Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="inventory-table-body">
+                <!-- Inventory rows will be added here dynamically -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        let inventory = [];
+        let idCounter = 1;
+
+        // Dummy data generation
+        for (let i = 1; i <= 50; i++) {
+            inventory.push({
+                id: idCounter++,
+                name: `Vaccine ${i}`,
+                quantity: Math.floor(Math.random() * 100) + 1,
+                expiryDate: `2024-${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}`,
+                status: Math.random() > 0.5 ? 'Available' : 'Out of Stock'
+            });
+        }
+
+        // Function to update the inventory table
+        function updateInventoryTable() {
+            const tableBody = document.getElementById('inventory-table-body');
+            tableBody.innerHTML = '';
+
+            inventory.forEach(vaccine => {
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                    <td>${vaccine.id}</td>
+                    <td>${vaccine.name}</td>
+                    <td>${vaccine.quantity}</td>
+                    <td>${vaccine.expiryDate}</td>
+                    <td>${vaccine.status}</td>
+                `;
+
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Initial table update
+        updateInventoryTable();
+    </script>
+</body>
+</html>
+

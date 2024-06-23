@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vaccination Appointment</title>
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f7f7f7;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 60px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            margin: 20px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #337ab7;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 3px;
+            font-weight: bold;
+            color: #666;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            background-color: #337ab7;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .form-group button:hover {
+            background-color: #23527c;
+        }
+        .notification {
+            margin-top: 20px;
+            text-align: center;
+            color: #337ab7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Vaccination Appointment</h2>
+        <form id="appointment-form">
+            <div class="form-group">
+                <label for="patient-mobile">Patient Mobile Number</label>
+                <input type="tel" id="patient-mobile" name="patient-mobile" required>
+            </div>
+            <div class="form-group">
+                <label for="vaccination-date">Vaccination Date</label>
+                <input type="date" id="vaccination-date" name="vaccination-date" required>
+            </div>
+            <div class="form-group">
+                <label for="vaccination-time">Vaccination Time</label>
+                <input type="time" id="vaccination-time" name="vaccination-time" required>
+            </div>
+            <div class="form-group">
+                <label for="vaccine-name">Vaccine Name</label>
+                <input type="text" id="vaccine-name" name="vaccine-name" required>
+            </div>
+            <div class="form-group">
+                <label for="dose-no">Dose Number</label>
+                <input type="number" id="dose-no" name="dose-no" required>
+            </div>
+            <div class="form-group">
+                <label for="referred-doctor">Referred Doctor</label>
+                <input type="text" id="referred-doctor" name="referred-doctor" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">Submit Appointment</button>
+            </div>
+        </form>
+        <div class="notification" id="notification"></div>
+    </div>
+
+    <script>
+        document.getElementById('appointment-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Gather form data
+            const patientMobile = document.getElementById('patient-mobile').value;
+            const vaccinationDate = document.getElementById('vaccination-date').value;
+            const vaccinationTime = document.getElementById('vaccination-time').value;
+            const vaccineName = document.getElementById('vaccine-name').value;
+            const doseNo = document.getElementById('dose-no').value;
+            const referredDoctor = document.getElementById('referred-doctor').value;
+
+            // Simulate sending data to the vaccination center
+            console.log('Sending appointment data to the vaccination center...');
+            console.log({
+                patientMobile,
+                vaccinationDate,
+                vaccinationTime,
+                vaccineName,
+                doseNo,
+                referredDoctor
+            });
+
+            // Simulate sending notification to the patient
+            const notificationElement = document.getElementById('notification');
+            notificationElement.textContent = `Notification sent to the patient: Your appointment for ${vaccineName} (Dose No: ${doseNo}) is scheduled on ${vaccinationDate} at ${vaccinationTime}. Referred Doctor: ${referredDoctor}.`;
+        });
+    </script>
+</body>
+</html>

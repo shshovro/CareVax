@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor's Portal</title>
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #fff;
+            padding: 50px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 1200px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #0044cc;
+            width: 100%;
+        }
+        .table-container {
+            width: 100%;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 40px;
+        }
+        .table th, .table td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+        .table th {
+            background-color: #0044cc;
+            color: white;
+        }
+        .table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .table tr:hover {
+            background-color: #e0e0e0;
+        }
+        .form-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            width: 100%;
+            gap: 10px;
+        }
+        .form-group input, .form-group button {
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+        .form-group button {
+            background-color: #0044cc;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .form-group button:hover {
+            background-color: #003399;
+        }
+        .notification {
+            text-align: center;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        .new-appointment {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Doctor's Portal</h2>
+        <div class="form-group">
+            <input type="text" id="license-number" placeholder="Enter License Number">
+            <input type="text" id="request-appointment-id" placeholder="Enter Appointment ID">
+            <button type="submit" onclick="requestAppointment(event)">Request Appointment</button>
+            <input type="text" id="search-appointment-id" placeholder="Search by Appointment ID">
+            <button onclick="checkAppointmentStatus()">Check Status</button>
+        </div>
+        <div class="notification new-appointment" id="new-appointment"></div>
+        <div class="notification" id="notification"></div>
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>License Number</th>
+                        <th>Name</th>
+                        <th>Specialization</th>
+                        <th>Phone Number</th>
+                        <th>Appointment ID</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="doctor-list">
+                    <!-- Doctor rows will be added here dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Sample doctor data with appointments and specialization
+        const doctors = [
+            { licenseNumber: 'D12345', name: 'Dr. John Smith', specialization: 'Cardiology', phoneNumber: '123-456-7890', appointments: { 'A001': true, 'A002': false } },
+            { licenseNumber: 'D23456', name: 'Dr. Jane Doe', specialization: 'Pediatrics', phoneNumber: '987-654-3210', appointments: { 'A003': true, 'A004': false } },
+            { licenseNumber: 'D34567', name: 'Dr. Emily Davis', specialization: 'Orthopedics', phoneNumber: '555-123-4567', appointments: { 'A005': true, 'A006': false } },
+            { licenseNumber: 'D45678', name: 'Dr. Michael Brown', specialization: 'Dermatology', phoneNumber: '444-555-6666', appointments: { 'A007': true, 'A008': false } }
+        ];
+
+        // Populate doctor list table
+        function populateDoctorList() {
+            const doctorList = document.getElementById('doctor-list');
+            doctors.forEach(doctor => {
+                Object.entries(doctor.appointments).forEach(([appId, status]) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${doctor.licenseNumber}</td>
+                        <td>${doctor.name}</td>
+                        <td>${doctor.specialization}</td>
+                        <td>${doctor.phoneNumber}</td>
+                        <td>${appId}</td>
+                        <td>${status ? 'Approved' : 'Denied'}</td>
+                    `;
+                    doctorList.appendChild(row);
+                });
+            });
+        }
+
+        // Request appointment
+        function requestAppointment(event) {
+            event.preventDefault();
+            const licenseNumber = document.getElementById('license-number').value;
+            const appointmentId = document.getElementById('request-appointment-id').value;
+            const notification = document.getElementById('notification');
+            const newAppointmentNotification = document.getElementById('new-appointment');
+            const doctor = doctors.find(doc => doc.licenseNumber === licenseNumber);
+
+            if (doctor) {
+                newAppointmentNotification.textContent = `Appointment ID ${appointmentId} requested for ${doctor.name}`;
+                newAppointmentNotification.style.color = 'blue';
+
+                document.getElementById('request-appointment-id').value = '';
+                notification.textContent = '';
+            } else {
+                notification.textContent = 'Doctor not found';
+                notification.style.color = 'red';
+                newAppointmentNotification.textContent = '';
+            }
+        }
+
+        // Check appointment status
+        function checkAppointmentStatus() {
+            const searchAppointmentId = document.getElementById('search-appointment-id').value;
+            const notification = document.getElementById('notification');
+            const appointmentStatusTable = document.getElementById('doctor-list');
+            appointmentStatusTable.innerHTML = '';
+
+            let found = false;
+            doctors.forEach(doctor => {
+                Object.entries(doctor.appointments).forEach(([appId, status]) => {
+                    if (appId === searchAppointmentId) {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${doctor.licenseNumber}</td>
+                            <td>${doctor.name}</td>
+                            <td>${doctor.specialization}</td>
+                            <td>${doctor.phoneNumber}</td>
+                            <td>${appId}</td>
+                            <td>${status ? 'Approved' : 'Denied'}</td>
+                        `;
+                        appointmentStatusTable.appendChild(row);
+                        found = true;
+                    }
+                });
+            });
+
+            if (!found) {
+                notification.textContent = 'Appointment still pending.';
+                notification.style.color = 'red';
+            } else {
+                notification.textContent = '';
+            }
+        }
+
+        // Initial population of doctor list
+        populateDoctorList();
+    </script>
+</body>
+</html>
+

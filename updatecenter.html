@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Responsive Bootstrap4 Shop Template, Created by Imran Hossain from https://imransdesign.com/">
+
+    <!-- title -->
+    <title>CareVex - Hospital Locator</title>
+
+    <!-- google font -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
+    <!-- fontawesome -->
+    <link rel="stylesheet" href="assets/css/all.min.css">
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <!-- main style -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <!-- responsive -->
+    <link rel="stylesheet" href="assets/css/responsive.css">
+
+    <style>
+        .container-flex {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px;
+        }
+        #map {
+            height: 500px;
+            width: 50%;
+        }
+        .hospital-info {
+            width: 45%;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        .search-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px auto;
+            max-width: 1300px;
+            text-align: center;
+        }
+        .search-container input[type="text"], .search-container select {
+            width: 30%;
+            padding: 8px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+        }
+        .search-container button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #0044cc;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .search-container button:hover {
+            background-color: #003399;
+        }
+        .add-hospital-container {
+            display: flex;
+            flex-direction: column;
+            margin: 20px auto;
+            max-width: 1300px;
+            text-align: left;
+        }
+        .add-hospital-container .field-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .add-hospital-container input, .add-hospital-container select {
+            margin: 5px;
+            padding: 8px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            flex: 1 1 calc(33% - 10px);
+        }
+        .add-hospital-container button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #0044cc;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+        }
+        .add-hospital-container button:hover {
+            background-color: #003399;
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Add Hospital Section -->
+    <div class="add-hospital-container">
+        <h3>Add New Hospital</h3>
+        <div class="field-group">
+            <input type="text" id="new-hospital-name" placeholder="Enter Hospital Name">
+            <input type="text" id="new-hospital-lat" placeholder="Enter Latitude">
+            <input type="text" id="new-hospital-lng" placeholder="Enter Longitude">
+            <input type="text" id="new-hospital-zip" placeholder="Enter ZIP Code">
+            <input type="text" id="new-hospital-district" placeholder="Enter District">
+            <input type="text" id="new-hospital-address" placeholder="Enter Address">
+            <input type="text" id="new-hospital-contact" placeholder="Enter Contact Number">
+            <input type="text" id="new-hospital-campaigns" placeholder="Enter Campaigns">
+            <input type="text" id="new-hospital-vaccines" placeholder="Enter Vaccines (comma separated)">
+        </div>
+        <button onclick="addNewHospital()">Add Hospital</button>
+    </div>
+
+   
+    <div class="container-flex">
+        <div id="map"></div>
+        <div class="hospital-info">
+            <h3>Hospital Information</h3>
+            <p id="hospital-name">Name: N/A</p>
+            <p id="hospital-address">Address: N/A</p>
+            <p id="hospital-contact">Contact: N/A</p>
+            <p id="hospital-campaigns">Campaigns: N/A</p>
+            <p id="hospital-vaccines">Vaccines: N/A</p>
+        </div>
+    </div>
+    <!-- End Hospital Map Section -->
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery-1.11.3.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/owl.carousel.min.js"></script>
+    <script src="assets/js/jquery.countTo.js"></script>
+    <script src="assets/js/jquery.mixitup.min.js"></script>
+    <script src="assets/js/jquery.magnific-popup.min.js"></script>
+    <script src="assets/js/jquery.waypoints.min.js"></script>
+    <script src="assets/js/jquery.meanmenu.min.js"></script>
+    <script src="assets/js/sticker.js"></script>
+    <script src="assets/js/main.js"></script>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <!-- Custom JS for Map -->
+    <script>
+        // Initialize the map
+        var map = L.map('map').setView([23.6850, 90.3563], 7); // Centered on Bangladesh
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19
+        }).addTo(map);
+
+        // Sample data for hospitals with zip codes and additional information
+        var hospitals = [
+            { name: "United Hospitals Limited", lat: 23.8103, lng: 90.4125, zip: "1212", district: "Dhaka", address: "Plot 15, Road 71, Gulshan, Dhaka, Bangladesh", contact: "123-456-7890", campaigns: "Blood Donation Camp", vaccines: ["COVID-19", "Hepatitis B"] },
+            { name: "Chattagram Maa-Shishu General Hospital", lat: 22.3569, lng: 91.7832, zip: "4000", district: "Chittagong", address: "487/B, O.R. Nizam Road, GEC More, Chittagong, Bangladesh", contact: "987-654-3210", campaigns: "Free Health Checkup", vaccines: ["COVID-19", "Influenza"] },
+            { name: "Islami Bank Medical College Hospital & Nursing Institute House-188, Sector-03 Housing Estate, Uposhahar, Rajshahi", lat: 24.3636, lng: 88.6241, zip: "6000", district: "Rajshahi", address: "Barnali More, House 351/318, Greater Road, Rajshahi-6000, Bangladesh", contact: "456-789-1230", campaigns: "Vaccination Drive", vaccines: ["Hepatitis B", "Polio"] }
+        ];
+
+        // Add hospital markers to the map
+        hospitals.forEach(function(hospital) {
+            L.marker([hospital.lat, hospital.lng]).addTo(map)
+                .bindPopup(hospital.name);
+        });
+
+        // Function to search hospitals by district name
+        function searchHospitalByDistrict() {
+            var districtName = document.getElementById('district-name').value.toLowerCase();
+            var hospitalFound = false;
+
+            hospitals.forEach(function(hospital) {
+                if (hospital.district.toLowerCase() === districtName) {
+                    map.setView([hospital.lat, hospital.lng], 15); // Zoom to the hospital location
+                    L.popup()
+                        .setLatLng([hospital.lat, hospital.lng])
+                        .setContent(hospital.name)
+                        .openOn(map);
+                    // Update hospital information
+                    document.getElementById('hospital-name').innerText = "Name: " + hospital.name;
+                    document.getElementById('hospital-address').innerText = "Address: " + hospital.address;
+                    document.getElementById('hospital-contact').innerText = "Contact: " + hospital.contact;
+                    document.getElementById('hospital-campaigns').innerText = "Campaigns: " + hospital.campaigns;
+                    document.getElementById('hospital-vaccines').innerText = "Vaccines: " + hospital.vaccines.join(", ");
+                    hospitalFound = true;
+                }
+            });
+
+            if (!hospitalFound) {
+                alert("No hospital found with the given district name.");
+                // Clear hospital information
+                document.getElementById('hospital-name').innerText = "Name: N/A";
+                document.getElementById('hospital-address').innerText = "Address: N/A";
+                document.getElementById('hospital-contact').innerText = "Contact: N/A";
+                document.getElementById('hospital-campaigns').innerText = "Campaigns: N/A";
+                document.getElementById('hospital-vaccines').innerText = "Vaccines: N/A";
+            }
+        }
+
+        // Function to search hospitals by vaccine name
+        function searchHospitalByVaccine() {
+            var vaccineName = document.getElementById('vaccine-name').value.toLowerCase();
+            var hospitalFound = false;
+
+            hospitals.forEach(function(hospital) {
+                if (hospital.vaccines.map(vaccine => vaccine.toLowerCase()).includes(vaccineName)) {
+                    map.setView([hospital.lat, hospital.lng], 15); // Zoom to the hospital location
+                    L.popup()
+                        .setLatLng([hospital.lat, hospital.lng])
+                        .setContent(hospital.name)
+                        .openOn(map);
+                    // Update hospital information
+                    document.getElementById('hospital-name').innerText = "Name: " + hospital.name;
+                    document.getElementById('hospital-address').innerText = "Address: " + hospital.address;
+                    document.getElementById('hospital-contact').innerText = "Contact: " + hospital.contact;
+                    document.getElementById('hospital-campaigns').innerText = "Campaigns: " + hospital.campaigns;
+                    document.getElementById('hospital-vaccines').innerText = "Vaccines: " + hospital.vaccines.join(", ");
+                    hospitalFound = true;
+                }
+            });
+
+            if (!hospitalFound) {
+                alert("No hospital found with the given vaccine name.");
+                // Clear hospital information
+                document.getElementById('hospital-name').innerText = "Name: N/A";
+                document.getElementById('hospital-address').innerText = "Address: N/A";
+                document.getElementById('hospital-contact').innerText = "Contact: N/A";
+                document.getElementById('hospital-campaigns').innerText = "Campaigns: N/A";
+                document.getElementById('hospital-vaccines').innerText = "Vaccines: N/A";
+            }
+        }
+
+        // Function to add a new hospital
+        function addNewHospital() {
+            var name = document.getElementById('new-hospital-name').value;
+            var lat = parseFloat(document.getElementById('new-hospital-lat').value);
+            var lng = parseFloat(document.getElementById('new-hospital-lng').value);
+            var zip = document.getElementById('new-hospital-zip').value;
+            var district = document.getElementById('new-hospital-district').value;
+            var address = document.getElementById('new-hospital-address').value;
+            var contact = document.getElementById('new-hospital-contact').value;
+            var campaigns = document.getElementById('new-hospital-campaigns').value;
+            var vaccines = document.getElementById('new-hospital-vaccines').value.split(',');
+
+            var newHospital = {
+                name: name,
+                lat: lat,
+                lng: lng,
+                zip: zip,
+                district: district,
+                address: address,
+                contact: contact,
+                campaigns: campaigns,
+                vaccines: vaccines.map(vaccine => vaccine.trim())
+            };
+
+            hospitals.push(newHospital);
+
+            L.marker([newHospital.lat, newHospital.lng]).addTo(map)
+                .bindPopup(newHospital.name);
+
+            alert('New hospital added successfully!');
+            
+            // Clear the input fields
+            document.getElementById('new-hospital-name').value = '';
+            document.getElementById('new-hospital-lat').value = '';
+            document.getElementById('new-hospital-lng').value = '';
+            document.getElementById('new-hospital-zip').value = '';
+            document.getElementById('new-hospital-district').value = '';
+            document.getElementById('new-hospital-address').value = '';
+            document.getElementById('new-hospital-contact').value = '';
+            document.getElementById('new-hospital-campaigns').value = '';
+            document.getElementById('new-hospital-vaccines').value = '';
+        }
+    </script>
+</body>
+</html>

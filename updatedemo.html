@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Patient Data Management</title>
+    <style>
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        #searchContainer, #addPatientContainer {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        label {
+            margin-top: 10px;
+        }
+        input, textarea {
+            width: 150px;
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            margin: 10px;
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        table {
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: #fff;
+        }
+        .edit-button, .save-button {
+            background-color: #ffc107;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .delete-button {
+            background-color: #ff0000;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .download-button {
+            background-color: #337ab7;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .input-cell input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .input-group {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="color: rgb(15, 106, 192);"> Patients data</h1>
+
+    
+    
+
+    <table id="outputTable">
+        <tr>
+            <th>User Name</th>
+            <th>Date of Birth</th>
+            <th>Patient ID</th>
+            <th>Mobile Number</th>
+            <th>Medical History</th>
+            <th>Sex</th>
+            <th>Age</th>
+            <th>Action</th>
+        </tr>
+    </table>
+
+    <script>
+        let patientData = [
+        {
+            userName: "Sadman Hafiz",
+            dateOfBirth: "1990-01-01",
+            patientId: "PID001",
+            mobileNumber: "1234567890",
+            medicalHistory: "medical_history_1.pdf",
+            sex: "Male",
+            age: 30
+        },
+        {
+            userName: "Yusuf Nayem",
+            dateOfBirth: "1992-02-02",
+            patientId: "PID002",
+            mobileNumber: "9876543210",
+            medicalHistory: "medical_history_2.pdf",
+            sex: "Female",
+            age: 28
+        },
+        {
+            userName: "Ayesha Khan",
+            dateOfBirth: "1985-03-03",
+            patientId: "PID003",
+            mobileNumber: "8765432109",
+            medicalHistory: "medical_history_3.pdf",
+            sex: "Female",
+            age: 36
+        },
+        {
+            userName: "Rahul Sharma",
+            dateOfBirth: "1995-04-04",
+            patientId: "PID004",
+            mobileNumber: "7654321098",
+            medicalHistory: "medical_history_4.pdf",
+            sex: "Male",
+            age: 25
+        },
+        {
+            userName: "Anita Desai",
+            dateOfBirth: "1988-05-05",
+            patientId: "PID005",
+            mobileNumber: "6543210987",
+            medicalHistory: "medical_history_5.pdf",
+            sex: "Female",
+            age: 33
+        },
+        {
+            userName: "Mohammed Ali",
+            dateOfBirth: "1993-06-06",
+            patientId: "PID006",
+            mobileNumber: "5432109876",
+            medicalHistory: "medical_history_6.pdf",
+            sex: "Male",
+            age: 27
+        },
+        {
+            userName: "Lisa Ray",
+            dateOfBirth: "1991-07-07",
+            patientId: "PID007",
+            mobileNumber: "4321098765",
+            medicalHistory: "medical_history_7.pdf",
+            sex: "Female",
+            age: 29
+        },
+        {
+            userName: "John Doe",
+            dateOfBirth: "1980-08-08",
+            patientId: "PID008",
+            mobileNumber: "3210987654",
+            medicalHistory: "medical_history_8.pdf",
+            sex: "Male",
+            age: 40
+        }
+    
+        ];
+
+        function renderTable() {
+            let table = document.getElementById("outputTable");
+            table.innerHTML = `
+                <tr>
+                    <th>User Name</th>
+                    <th>Date of Birth</th>
+                    <th>Patient ID</th>
+                    <th>Mobile Number</th>
+                    <th>Medical History</th>
+                    <th>Sex</th>
+                    <th>Age</th>
+                    <th>Action</th>
+                </tr>
+            `;
+            patientData.forEach((patient, index) => {
+                let newRow = table.insertRow(table.rows.length);
+                newRow.insertCell(0).innerHTML = patient.userName;
+                newRow.insertCell(1).innerHTML = patient.dateOfBirth;
+                newRow.insertCell(2).innerHTML = patient.patientId;
+                newRow.insertCell(3).innerHTML = patient.mobileNumber;
+                newRow.insertCell(4).innerHTML = `
+                    <button class="download-button" onclick="downloadMedicalHistory('${patient.medicalHistory}')">Download PDF</button>
+                `;
+                newRow.insertCell(5).innerHTML = patient.sex;
+                newRow.insertCell(6).innerHTML = patient.age;
+                let actionCell = newRow.insertCell(7);
+                actionCell.innerHTML = `
+                    <button class="edit-button" onclick="editData(${index})">Edit</button>
+                    <button class="delete-button" onclick="deleteData(${index})">Delete</button>
+                `;
+            });
+        }
+
+        function searchPatient() {
+            let patientId = document.getElementById("patientIdInput").value;
+            let filteredData = patientData.filter((patient) => patient.patientId === patientId);
+            if (filteredData.length > 0) {
+                patientData = filteredData;
+            }
+            renderTable();
+        }
+
+        function addPatient() {
+            let newUserName = document.getElementById("newUserName").value;
+            let newDateOfBirth = document.getElementById("newDateOfBirth").value;
+            let newPatientId = document.getElementById("newPatientId").value;
+            let newMobileNumber = document.getElementById("newMobileNumber").value;
+            let newMedicalHistory = document.getElementById("newMedicalHistory").value;
+            let newSex = document.getElementById("newSex").value;
+            let newAge = document.getElementById("newAge").value;
+
+            let newPatient = {
+                userName: newUserName,
+                dateOfBirth: newDateOfBirth,
+                patientId: newPatientId,
+                mobileNumber: newMobileNumber,
+                medicalHistory: newMedicalHistory,
+                sex: newSex,
+                age: parseInt(newAge)
+            };
+
+            patientData.push(newPatient);
+            renderTable();
+            clearAddPatientForm();
+        }
+
+        function clearAddPatientForm() {
+            document.getElementById("newUserName").value = '';
+            document.getElementById("newDateOfBirth").value = '';
+            document.getElementById("newPatientId").value = '';
+            document.getElementById("newMobileNumber").value = '';
+            document.getElementById("newMedicalHistory").value = '';
+            document.getElementById("newSex").value = '';
+            document.getElementById("newAge").value = '';
+        }
+
+        function editData(index) {
+            let patient = patientData[index];
+            document.getElementById("newUserName").value = patient.userName;
+            document.getElementById("newDateOfBirth").value = patient.dateOfBirth;
+            document.getElementById("newPatientId").value = patient.patientId;
+            document.getElementById("newMobileNumber").value = patient.mobileNumber;
+            document.getElementById("newMedicalHistory").value = patient.medicalHistory;
+            document.getElementById("newSex").value = patient.sex;
+            document.getElementById("newAge").value = patient.age;
+
+            deleteData(index);
+        }
+
+        function deleteData(index) {
+            patientData.splice(index, 1);
+            renderTable();
+        }
+
+        function downloadMedicalHistory(file) {
+            // download pdf file here
+            console.log(file);
+        }
+
+        renderTable();
+    </script>
+</body>
+</html>
